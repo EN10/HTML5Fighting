@@ -1,0 +1,67 @@
+<canvas id="draw">
+<script>
+document.getElementById("draw").width = window.innerWidth;
+document.getElementById("draw").height = 350;
+var g = document.getElementById("draw").getContext("2d");
+var LP = 100;    var LFB = 500;    var LS = 0;    var HP = 50;    
+var RP = 100;    var RFB = 0;      var RS = 500;
+setInterval(draw,100);                         // animation clock
+window.onkeypress = fireball;
+
+function draw(){
+g.fillStyle = "SkyBlue";                       
+g.fillRect(0,0,500,350);                       // background
+
+if (LP > 50)    { g.fillStyle = "Green"; }     // green health if >= 50
+else            { g.fillStyle = "Red"; }       // red health if < 50
+g.fillRect(HP,25,LP,10);                       // left player health bar
+if (RP > 50)    { g.fillStyle = "Green"; }     // green health if >= 50
+else            { g.fillStyle = "Red"; }       // red health if < 50
+g.fillRect(HP + 300,25,RP > 50,10);            // right player health bar
+g.fillStyle = "White"; 
+g.font = "12pt Arial";
+g.fillText(LP,50,50);                          // display health text
+g.fillText(RP,350,50);
+
+var LeftMan = new Image();
+LeftMan.src = "LM.png";
+g.drawImage(LeftMan,50,150);
+var RightMan = new Image();
+RightMan.src = "RM.png";
+g.drawImage(RightMan,350,150);
+
+g.fillStyle = "Yellow";
+g.beginPath();                                   // draw fireball
+if (RFB > 100)    { g.arc(RFB,200,10,0,2*Math.PI);    RFB = RFB - 10; 
+if (RFB-LS > 10 && RFB-LS < 60) RFB=0;
+}
+if (LFB < 400)    { g.arc(LFB,200,10,0,2*Math.PI);    LFB = LFB + 10; 
+if (RS-LFB > 10 && RS-LFB < 60) LFB=400;        // BLOCK FIREBALL
+}
+g.fill();
+
+if (LP > 0 && RFB === 120)    LP = LP-10;        // right fireball hit
+if (RP > 0 && LFB === 370)    RP = RP-10;        // left fireball hit
+
+g.strokeStyle="Blue";                            
+g.lineWidth=5;
+g.beginPath();
+if (RS < 380)
+{   g.arc(RS,200,40,0.5*Math.PI,1.5*Math.PI);    // draw right shield
+    RS = RS + 10;
+}   else RS=500;
+if (LS > 120)
+{   g.arc(LS,200,40,1.5*Math.PI,0.5*Math.PI);    // draw left shield
+    LS = LS - 10;
+}   else LS=0;
+g.stroke();
+}
+
+function fireball(e){
+var key = String.fromCharCode(e.charCode);
+if (key === "4" &&  RFB < 130) RFB = 360;        // right fireball start reset
+if (key === "d" &&  LFB > 360) LFB = 130;        // left fireball start reset
+if (key === "6" &&  RS > 350 && RFB < 120) RS = 300;     // right shield reset
+if (key === "a" &&  LS < 130 && LFB > 370) LS = 180;     // left shield reset   
+}
+</script>
